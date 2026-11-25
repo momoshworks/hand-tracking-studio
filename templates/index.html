@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hand Tracking AI Studio | استوديو تتبع اليد الذكي</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="background-glow glow-1"></div>
+    <div class="background-glow glow-2"></div>
+
+    <div class="app-container">
+        <!-- Top Navigation Bar -->
+        <header class="glass-header">
+            <div class="logo-group">
+                <div class="logo-icon">🖐️</div>
+                <div>
+                    <h1>Hand Tracking AI Studio</h1>
+                    <span class="subtitle">استوديو الذكاء الاصطناعي الموحد لتتبع اليد</span>
+                </div>
+            </div>
+
+            <div class="header-badges">
+                <div class="badge status-badge" id="connStatus">
+                    <span class="status-dot"></span> <span id="statusText">جاري الاتصال...</span>
+                </div>
+                <div class="badge fps-badge">
+                    <span>⚡ FPS:</span> <strong id="fpsVal">0</strong>
+                </div>
+                <div class="badge mode-badge">
+                    <span>الوضع الحالي:</span> <strong id="activeModeLabel">كاشف الإيماءات</strong>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Layout -->
+        <main class="dashboard-grid">
+            <!-- Left/Center: Video Stream Window -->
+            <section class="video-section glass-card">
+                <div class="card-header">
+                    <h2><span class="dot-live"></span> البث المباشر للكاميرا والذكاء الاصطناعي</h2>
+                    <div class="camera-controls">
+                        <button class="btn-icon" id="btnRefreshStream" title="تحديث البث">🔄</button>
+                    </div>
+                </div>
+
+                <div class="video-wrapper">
+                    <img id="videoFeed" src="/video_feed" alt="Live Hand Tracking Camera Stream">
+                    <div class="hud-overlay">
+                        <div class="hud-tag" id="hudGesture">👋 لا توجد يد</div>
+                        <div class="hud-tag" id="hudFps">0 FPS</div>
+                    </div>
+                </div>
+
+                <!-- Mode Selection Bar -->
+                <div class="modes-toolbar">
+                    <button class="mode-btn active" data-mode="1" id="modeBtn1">
+                        <span class="icon">✋</span>
+                        <div class="btn-text">
+                            <strong>الإيماءات والعدّ</strong>
+                            <small>Gestures & Landmarks</small>
+                        </div>
+                    </button>
+
+                    <button class="mode-btn" data-mode="2" id="modeBtn2">
+                        <span class="icon">🖱️</span>
+                        <div class="btn-text">
+                            <strong>الفأرة الافتراضية</strong>
+                            <small>Virtual Mouse</small>
+                        </div>
+                    </button>
+
+                    <button class="mode-btn" data-mode="3" id="modeBtn3">
+                        <span class="icon">🎨</span>
+                        <div class="btn-text">
+                            <strong>الرسم في الهواء</strong>
+                            <small>Air Canvas</small>
+                        </div>
+                    </button>
+
+                    <button class="mode-btn" data-mode="4" id="modeBtn4">
+                        <span class="icon">🔊</span>
+                        <div class="btn-text">
+                            <strong>التحكم بالصوت</strong>
+                            <small>Volume Gesture</small>
+                        </div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Right: Interactive Control & Telemetry Panel -->
+            <aside class="control-section">
+                <!-- Card 1: Gesture Telemetry -->
+                <div class="glass-card telemetry-card">
+                    <div class="card-header">
+                        <h3>🤖 تحليل الإيماءات المباشر</h3>
+                    </div>
+                    <div class="gesture-display">
+                        <div class="gesture-emoji" id="gestureEmoji">👋</div>
+                        <div class="gesture-info">
+                            <h4 id="gestureAr">في انتظار كشف اليد...</h4>
+                            <p id="gestureEn">Searching for hands</p>
+                            <div class="finger-counter-pill">
+                                عدد الأصابع المرفوعة: <strong id="fingerCount">0</strong> / 5
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Finger State Indicators -->
+                    <div class="fingers-pills-row">
+                        <div class="finger-pill" id="fingerThumb"><span>👍 إبهام</span></div>
+                        <div class="finger-pill" id="fingerIndex"><span>☝️ سبابة</span></div>
+                        <div class="finger-pill" id="fingerMiddle"><span>🖕 وسطى</span></div>
+                        <div class="finger-pill" id="fingerRing"><span>💍 بنصر</span></div>
+                        <div class="finger-pill" id="fingerPinky"><span>🤙 خنصر</span></div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Virtual Mouse Controls -->
+                <div class="glass-card mode-panel" id="mousePanel">
+                    <div class="card-header">
+                        <h3>🖱️ إعدادات الفأرة الافتراضية</h3>
+                        <label class="switch">
+                            <input type="checkbox" id="mouseToggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <p class="panel-desc">
+                        حرّك مؤشر الماوس بسبابتك، وانقر بضم الإبهام والسبابة (Pinch). مفتاح أمان لمنع الحركة غير المقصودة.
+                    </p>
+                    <div class="mouse-stats-grid">
+                        <div class="stat-box">
+                            <small>حالة المفتاح</small>
+                            <strong id="mouseStateLabel" class="off">مُعطّل (للحماية)</strong>
+                        </div>
+                        <div class="stat-box">
+                            <small>الإجراء الحالي</small>
+                            <strong id="mouseActionLabel">ثابت (Idle)</strong>
+                        </div>
+                        <div class="stat-box">
+                            <small>الإحداثيات</small>
+                            <strong id="mouseCoordsLabel">0, 0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Air Canvas Controls -->
+                <div class="glass-card mode-panel" id="canvasPanel">
+                    <div class="card-header">
+                        <h3>🎨 أدوات الرسم والتوقيع بالهواء</h3>
+                    </div>
+                    <p class="panel-desc">
+                        ارفع السبابة فقط للرسم. ارفع السبابة والوسطى معاً لاختيار الألوان أو التحرك بدون رسم.
+                    </p>
+
+                    <div class="color-palette-bar">
+                        <button class="color-dot active" data-color="Cyan" style="background:#00ffff;" title="Cyan"></button>
+                        <button class="color-dot" data-color="Magenta" style="background:#ff00ff;" title="Magenta"></button>
+                        <button class="color-dot" data-color="Green" style="background:#80ff00;" title="Green"></button>
+                        <button class="color-dot" data-color="Yellow" style="background:#ffd700;" title="Yellow"></button>
+                        <button class="color-dot" data-color="White" style="background:#ffffff;" title="White"></button>
+                        <button class="color-dot eraser-dot" data-color="Eraser" title="ممحاة">🧹</button>
+                    </div>
+
+                    <div class="canvas-actions">
+                        <button class="btn btn-danger" id="btnClearCanvas">🗑️ مسح اللوحة</button>
+                        <button class="btn btn-primary" id="btnSaveCanvas">💾 حفظ الرسمة PNG</button>
+                    </div>
+                    <div id="saveResult" class="save-result-msg"></div>
+                </div>
+
+                <!-- Card 4: Audio Controller -->
+                <div class="glass-card mode-panel" id="audioPanel">
+                    <div class="card-header">
+                        <h3>🔊 مؤشر مستوى الصوت</h3>
+                    </div>
+                    <div class="volume-container">
+                        <div class="volume-gauge-bar">
+                            <div class="volume-gauge-fill" id="volFill" style="width: 50%;"></div>
+                        </div>
+                        <div class="volume-meta">
+                            <span>المستوى: <strong id="volPercent">50%</strong></span>
+                            <span>مسافة الأصابع: <strong id="volDist">0 px</strong></span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
